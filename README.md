@@ -106,3 +106,12 @@ Before running Terraform, you must ensure:
 Terraform uses SSH to connect to the server. Ensure you have:
 1. SSH access to the server via public key (`ssh-copy-id`).
 2. Sudo privileges on the server (NOPASSWD recommended).
+
+## Debugging & Logs
+
+To check the logs for a specific server (e.g., CS2), you can SSH into the server and tail the Docker logs:
+
+```bash
+ssh michael@192.168.86.38 "sudo docker logs -f cs2-server"
+```
+
