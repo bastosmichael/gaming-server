@@ -40,9 +40,8 @@ resource "null_resource" "bootstrap_docker" {
       # "sudo usermod -aG docker $USER || true",
 
       # Create stack dirs
-      "sudo mkdir -p /opt/portainer /opt/ollama /opt/rust-server /opt/ark /opt/cs2 /opt/minecraft /opt/plex /opt/tf2 /opt/garrysmod /opt/insurgency-sandstorm /opt/squad /opt/squad44 /opt/satisfactory /opt/factorio /opt/eco /opt/space-engineers /opt/starbound /opt/aoe2de /opt/palworld /opt/arma3 /opt/minetest /opt/openrct2 /opt/openttd /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 /opt/jellyfin /opt/immich /opt/navidrome /opt/audiobookshelf /opt/nextcloud",
+      "sudo mkdir -p /opt/portainer /opt/rust-server /opt/ark /opt/cs2 /opt/minecraft /opt/tf2 /opt/garrysmod /opt/insurgency-sandstorm /opt/squad /opt/squad44 /opt/satisfactory /opt/factorio /opt/eco /opt/space-engineers /opt/starbound /opt/aoe2de /opt/palworld /opt/arma3 /opt/minetest /opt/openrct2 /opt/openttd /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3",
       "sudo mkdir -p /opt/cs2/data",
-      "sudo mkdir -p /opt/plex/media /opt/jellyfin/cache /opt/jellyfin/media /opt/immich/library /opt/navidrome/music /opt/audiobookshelf/audiobooks /opt/audiobookshelf/podcasts /opt/nextcloud/html",
       "sudo chown -R 1000:1000 /opt/cs2/data || true",
     ]
   }
@@ -60,17 +59,10 @@ resource "null_resource" "deploy_stacks" {
 
       # Copy Compose Files via SCP (renaming on destination to avoid collisions)
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/portainer/docker-compose.yml" "$USER@$HOST:/tmp/portainer.docker-compose.yml"
-      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/ollama/docker-compose.yml" "$USER@$HOST:/tmp/ollama.docker-compose.yml"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/rust/docker-compose.yml" "$USER@$HOST:/tmp/rust.docker-compose.yml"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/ark/docker-compose.yml" "$USER@$HOST:/tmp/ark.docker-compose.yml"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/cs2/docker-compose.yml" "$USER@$HOST:/tmp/cs2.docker-compose.yml"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/minecraft/docker-compose.yml" "$USER@$HOST:/tmp/minecraft.docker-compose.yml"
-      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/plex/docker-compose.yml" "$USER@$HOST:/tmp/plex.docker-compose.yml"
-      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/jellyfin/docker-compose.yml" "$USER@$HOST:/tmp/jellyfin.docker-compose.yml"
-      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/immich/docker-compose.yml" "$USER@$HOST:/tmp/immich.docker-compose.yml"
-      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/navidrome/docker-compose.yml" "$USER@$HOST:/tmp/navidrome.docker-compose.yml"
-      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/audiobookshelf/docker-compose.yml" "$USER@$HOST:/tmp/audiobookshelf.docker-compose.yml"
-      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/nextcloud/docker-compose.yml" "$USER@$HOST:/tmp/nextcloud.docker-compose.yml"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/tf2/docker-compose.yml" "$USER@$HOST:/tmp/tf2.docker-compose.yml"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/garrysmod/docker-compose.yml" "$USER@$HOST:/tmp/garrysmod.docker-compose.yml"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/insurgency_sandstorm/docker-compose.yml" "$USER@$HOST:/tmp/insurgency_sandstorm.docker-compose.yml"
@@ -139,17 +131,14 @@ resource "null_resource" "deploy_stacks" {
         sudo systemctl restart systemd-resolved || true
         
         # Ensure directories exist (in case bootstrap didn't run or new ones matched)
-        sudo mkdir -p /opt/portainer /opt/ollama /opt/rust-server /opt/ark /opt/cs2 /opt/minecraft /opt/plex \
-          /opt/tf2 /opt/garrysmod /opt/insurgency-sandstorm /opt/squad /opt/squad44 /opt/satisfactory /opt/factorio \
+        sudo mkdir -p /opt/portainer /opt/rust-server /opt/ark /opt/cs2 /opt/minecraft /opt/tf2 /opt/garrysmod /opt/insurgency-sandstorm /opt/squad /opt/squad44 /opt/satisfactory /opt/factorio \
           /opt/eco /opt/space-engineers /opt/starbound /opt/aoe2de /opt/palworld /opt/arma3 /opt/minetest /opt/openrct2 \
-          /opt/openttd /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 /opt/jellyfin /opt/immich \
-          /opt/navidrome /opt/audiobookshelf /opt/nextcloud
-        sudo mkdir -p /opt/cs2/data /opt/plex/media /opt/jellyfin/cache /opt/jellyfin/media /opt/immich/library /opt/navidrome/music /opt/audiobookshelf/audiobooks /opt/audiobookshelf/podcasts /opt/nextcloud/html
-        sudo chown -R 1000:1000 /opt/cs2/data /opt/ark /opt/plex /opt/portainer /opt/ollama /opt/rust-server /opt/minecraft \
+          /opt/openttd /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3
+        sudo mkdir -p /opt/cs2/data
+        sudo chown -R 1000:1000 /opt/cs2/data /opt/ark /opt/portainer /opt/rust-server /opt/minecraft \
           /opt/tf2 /opt/garrysmod /opt/insurgency-sandstorm /opt/squad /opt/squad44 /opt/satisfactory /opt/factorio /opt/eco \
           /opt/space-engineers /opt/starbound /opt/aoe2de /opt/palworld /opt/arma3 /opt/minetest /opt/openrct2 /opt/openttd \
-          /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 /opt/jellyfin /opt/immich /opt/navidrome \
-          /opt/audiobookshelf /opt/nextcloud || true
+          /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 || true
 
         # Configure Firewall (UFW)
         echo "Configuring Firewall..."
@@ -158,15 +147,6 @@ resource "null_resource" "deploy_stacks" {
         sudo ufw allow 443/tcp # HTTPS (reverse proxies / direct web access)
         sudo ufw allow 8000/tcp # Portainer
         sudo ufw allow 9000/tcp # Portainer
-        sudo ufw allow 3000/tcp # Open WebUI / dashboards
-        sudo ufw allow 11434/tcp # Ollama
-        sudo ufw allow 32400/tcp # Plex
-        sudo ufw allow 8096/tcp  # Jellyfin
-        sudo ufw allow 8920/tcp  # Jellyfin HTTPS
-        sudo ufw allow 2283/tcp  # Immich
-        sudo ufw allow 4533/tcp  # Navidrome
-        sudo ufw allow 13378/tcp # Audiobookshelf
-        sudo ufw allow 8080/tcp  # Nextcloud
         sudo ufw allow 28015:28016/udp # Rust
         sudo ufw allow 28015:28016/tcp # Rust RCON
         sudo ufw allow 7777:7778/udp # Ark
@@ -215,49 +195,9 @@ resource "null_resource" "deploy_stacks" {
 
         # Move files to correct locations
         sudo mv /tmp/portainer.docker-compose.yml /opt/portainer/docker-compose.yml
-        
-        # Configure Ollama with GPU support if NVIDIA GPU is present
-        if command -v nvidia-smi &> /dev/null; then
-          echo "NVIDIA GPU detected. Enabling GPU support for Ollama..."
-          cat <<EOF | sudo tee /opt/ollama/docker-compose.yml > /dev/null
-version: '3.8'
-
-services:
-  ollama:
-    image: ollama/ollama:latest
-    container_name: ollama
-    restart: unless-stopped
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-
-volumes:
-  ollama_data:
-EOF
-          # Clean up the temp CPU File
-          sudo rm -f /tmp/ollama.docker-compose.yml
-        else
-          echo "No NVIDIA GPU detected. Using CPU mode for Ollama."
-          sudo mv /tmp/ollama.docker-compose.yml /opt/ollama/docker-compose.yml
-        fi
-
         sudo mv /tmp/rust.docker-compose.yml /opt/rust-server/docker-compose.yml
         sudo mv /tmp/ark.docker-compose.yml /opt/ark/docker-compose.yml
         sudo mv /tmp/minecraft.docker-compose.yml /opt/minecraft/docker-compose.yml
-        sudo mv /tmp/plex.docker-compose.yml /opt/plex/docker-compose.yml
-        sudo mv /tmp/jellyfin.docker-compose.yml /opt/jellyfin/docker-compose.yml
-        sudo mv /tmp/immich.docker-compose.yml /opt/immich/docker-compose.yml
-        sudo mv /tmp/navidrome.docker-compose.yml /opt/navidrome/docker-compose.yml
-        sudo mv /tmp/audiobookshelf.docker-compose.yml /opt/audiobookshelf/docker-compose.yml
-        sudo mv /tmp/nextcloud.docker-compose.yml /opt/nextcloud/docker-compose.yml
         sudo mv /tmp/tf2.docker-compose.yml /opt/tf2/docker-compose.yml
         sudo mv /tmp/garrysmod.docker-compose.yml /opt/garrysmod/docker-compose.yml
         sudo mv /tmp/insurgency_sandstorm.docker-compose.yml /opt/insurgency-sandstorm/docker-compose.yml
@@ -285,63 +225,12 @@ EOF
         sudo sed -e "s/__CS2_GSLT__/${var.cs2_gslt}/g" /tmp/cs2.docker-compose.yml | sudo tee /opt/cs2/docker-compose.yml >/dev/null
         sudo rm -f /tmp/cs2.docker-compose.yml
 
-        # Configure Plex Media Storage
-        if [ -d "/mnt/coldstore" ]; then
-            echo "Coldstore detected. Pointing Plex media to /mnt/coldstore..."
-            sudo sed -i 's|/opt/plex/media:/media|/mnt/coldstore:/media|' /opt/plex/docker-compose.yml
-        else
-            echo "No coldstore detected. Keeping default /opt/plex/media."
-        fi
-
-        if [ -d "/mnt/coldstore" ]; then
-            echo "Coldstore detected. Pointing Jellyfin media to /mnt/coldstore/jellyfin..."
-            sudo sed -i 's|/opt/jellyfin/media:/media|/mnt/coldstore/jellyfin:/media|' /opt/jellyfin/docker-compose.yml
-        else
-            echo "No coldstore detected. Keeping default /opt/jellyfin/media."
-        fi
-
-        if [ -d "/mnt/coldstore" ]; then
-            echo "Coldstore detected. Pointing Immich library to /mnt/coldstore/immich-library..."
-            sudo sed -i 's|/opt/immich/library:/usr/src/app/upload|/mnt/coldstore/immich-library:/usr/src/app/upload|' /opt/immich/docker-compose.yml
-        else
-            echo "No coldstore detected. Keeping default /opt/immich/library."
-        fi
-
-        if [ -d "/mnt/coldstore" ]; then
-            echo "Coldstore detected. Pointing Navidrome music to /mnt/coldstore/music..."
-            sudo sed -i 's|/opt/navidrome/music:/music|/mnt/coldstore/music:/music|' /opt/navidrome/docker-compose.yml
-        else
-            echo "No coldstore detected. Keeping default /opt/navidrome/music."
-        fi
-
-        if [ -d "/mnt/coldstore" ]; then
-            echo "Coldstore detected. Pointing Audiobookshelf media to /mnt/coldstore..."
-            sudo sed -i 's|/opt/audiobookshelf/audiobooks:/audiobooks|/mnt/coldstore/audiobooks:/audiobooks|' /opt/audiobookshelf/docker-compose.yml
-            sudo sed -i 's|/opt/audiobookshelf/podcasts:/podcasts|/mnt/coldstore/podcasts:/podcasts|' /opt/audiobookshelf/docker-compose.yml
-        else
-            echo "No coldstore detected. Keeping default /opt/audiobookshelf media paths."
-        fi
-
-        if [ -d "/mnt/coldstore" ]; then
-            echo "Coldstore detected. Pointing Nextcloud data to /mnt/coldstore/nextcloud..."
-            sudo sed -i 's|/opt/nextcloud/html:/var/www/html|/mnt/coldstore/nextcloud:/var/www/html|' /opt/nextcloud/docker-compose.yml
-        else
-            echo "No coldstore detected. Keeping default /opt/nextcloud/html."
-        fi
-
         # Deploy Stacks
         ${var.enable_portainer ? "cd /opt/portainer && (sudo docker rm -f portainer || true) && retry sudo docker compose up -d" : "echo 'Skipping Portainer'"}
-        ${var.enable_ollama ? "cd /opt/ollama && (sudo docker rm -f ollama || true) && retry sudo docker compose up -d && sleep 10 && retry sudo docker exec ollama ollama pull tinyllama && retry sudo docker exec ollama ollama pull starcoder:1b && retry sudo docker exec ollama ollama pull gpt-oss" : "echo 'Skipping Ollama'"}
         ${var.enable_rust ? "cd /opt/rust-server && (sudo docker rm -f rust-server || true) && retry sudo docker compose up -d && check_and_pause rust-server 600" : "echo 'Skipping Rust'"}
         ${var.enable_ark ? "cd /opt/ark && (sudo docker rm -f ark-server ark_server || true) && retry sudo docker compose up -d && check_and_pause ark-server 600" : "echo 'Skipping ARK'"}
         ${var.enable_cs2 ? "cd /opt/cs2 && (sudo docker rm -f cs2-server cs2_server || true) && retry sudo docker compose up -d && check_and_pause cs2-server 60" : "echo 'Skipping CS2'"}
         ${var.enable_minecraft ? "cd /opt/minecraft && (sudo docker rm -f minecraft-server || true) && retry sudo docker compose up -d && check_and_pause minecraft-server 120" : "echo 'Skipping Minecraft'"}
-        ${var.enable_plex ? "cd /opt/plex && (sudo docker rm -f plex || true) && retry sudo docker compose up -d" : "echo 'Skipping Plex'"}
-        ${var.enable_jellyfin ? "cd /opt/jellyfin && (sudo docker rm -f jellyfin || true) && retry sudo docker compose up -d" : "echo 'Skipping Jellyfin'"}
-        ${var.enable_immich ? "cd /opt/immich && retry sudo docker compose up -d" : "echo 'Skipping Immich'"}
-        ${var.enable_navidrome ? "cd /opt/navidrome && (sudo docker rm -f navidrome || true) && retry sudo docker compose up -d" : "echo 'Skipping Navidrome'"}
-        ${var.enable_audiobookshelf ? "cd /opt/audiobookshelf && (sudo docker rm -f audiobookshelf || true) && retry sudo docker compose up -d" : "echo 'Skipping Audiobookshelf'"}
-        ${var.enable_nextcloud ? "cd /opt/nextcloud && (sudo docker rm -f nextcloud nextcloud-db nextcloud-redis || true) && retry sudo docker compose up -d" : "echo 'Skipping Nextcloud'"}
         ${var.enable_tf2 ? "cd /opt/tf2 && (sudo docker rm -f tf2-server || true) && retry sudo docker compose up -d && check_and_pause tf2-server 60" : "echo 'Skipping TF2'"}
         ${var.enable_garrysmod ? "cd /opt/garrysmod && (sudo docker rm -f garrysmod-server || true) && retry sudo docker compose up -d && check_and_pause garrysmod-server 60" : "echo \"Skipping Garry's Mod\""}
         ${var.enable_insurgency_sandstorm ? "cd /opt/insurgency-sandstorm && (sudo docker rm -f insurgency-sandstorm-server || true) && retry sudo docker compose up -d && check_and_pause insurgency-sandstorm-server 180" : "echo 'Skipping Insurgency: Sandstorm'"}

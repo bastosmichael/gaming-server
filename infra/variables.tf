@@ -10,12 +10,6 @@ variable "enable_portainer" {
   default     = true
 }
 
-variable "enable_ollama" {
-  description = "Enable Ollama stack deployment"
-  type        = bool
-  default     = false
-}
-
 variable "enable_rust" {
   description = "Enable Rust server stack deployment"
   type        = bool
@@ -36,42 +30,6 @@ variable "enable_cs2" {
 
 variable "enable_minecraft" {
   description = "Enable Minecraft server stack deployment"
-  type        = bool
-  default     = false
-}
-
-variable "enable_plex" {
-  description = "Enable Plex stack deployment"
-  type        = bool
-  default     = false
-}
-
-variable "enable_jellyfin" {
-  description = "Enable Jellyfin stack deployment"
-  type        = bool
-  default     = false
-}
-
-variable "enable_immich" {
-  description = "Enable Immich stack deployment"
-  type        = bool
-  default     = false
-}
-
-variable "enable_navidrome" {
-  description = "Enable Navidrome stack deployment"
-  type        = bool
-  default     = false
-}
-
-variable "enable_audiobookshelf" {
-  description = "Enable Audiobookshelf stack deployment"
-  type        = bool
-  default     = false
-}
-
-variable "enable_nextcloud" {
-  description = "Enable Nextcloud stack deployment"
   type        = bool
   default     = false
 }
