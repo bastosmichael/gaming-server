@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  valheim-server:
+    image: ghcr.io/lloesche/valheim-server
+    container_name: valheim-server
+    restart: unless-stopped
+    environment:
+      - "SERVER_NAME=Valheim - Dedicated"
+      - WORLD_NAME=Dedicated
+      - SERVER_PASS=changeme
+      - SERVER_PORT=2456
+      - PUBLIC=1
+      - TZ=UTC
+    volumes:
+      - valheim_config:/config
+      - valheim_worlds:/opt/valheim
+    ports:
+      - "2456:2456/udp"
+      - "2457:2457/udp"
+      - "2458:2458/udp"
+
+volumes:
+  valheim_config:
+  valheim_worlds:

@@ -14,6 +14,7 @@ infra/            # Terraform configuration
     ark/ cs2/ minecraft/ rust/ tf2/ garrysmod/ insurgency_sandstorm/ squad/ squad44/
     satisfactory/ factorio/ eco/ space_engineers/ starbound/ aoe2de/ palworld/ arma3/
     minetest/ openrct2/ openttd/ zeroad/ openra/ teeworlds/ xonotic/ ioquake3/
+    valheim/ valheim_thunderstore/ terraria/ dont_starve_together/ vintage_story/
     portainer/
 ```
 
@@ -53,7 +54,12 @@ infra/            # Terraform configuration
      -var="enable_openra=true" \
      -var="enable_teeworlds=true" \
      -var="enable_xonotic=true" \
-     -var="enable_ioquake3=true"
+     -var="enable_ioquake3=true" \
+     -var="enable_valheim=true" \
+     -var="enable_valheim_thunderstore=true" \
+     -var="enable_terraria=true" \
+     -var="enable_dont_starve_together=true" \
+     -var="enable_vintage_story=true"
    ```
 
    **Note:** replace `192.168.86.38` with your actual server IP.
@@ -92,6 +98,11 @@ infra/            # Terraform configuration
    | [Teeworlds / DDNet](https://www.teeworlds.com/) | UDP: `<server-ip>:8303` (Teeworlds), `<server-ip>:8304` (DDNet) | Add `<server-ip>:8303` to favorites in the in-game browser for vanilla, or `<server-ip>:8304` for DDNet; refresh and join. |
    | [Xonotic](https://xonotic.org/) | UDP/TCP: `<server-ip>:26000` | Open **Multiplayer** → **Servers**, add a favorite or console connect to `<server-ip>:26000`. |
    | [ioquake3 / Quake 3](https://ioquake3.org/) | UDP: `<server-ip>:27960` | Open the console and run `connect <server-ip>:27960`, or add a favorite server with that address. |
+   | [Valheim](https://www.valheimgame.com/) | UDP: `<server-ip>:2456-2458` | From the in-game **Join Game** screen, add a favorite with `<server-ip>:2456` and the configured password; the extra ports handle queries. |
+   | [Valheim (Thunderstore modpack)](https://thunderstore.io/c/valheim/) | UDP: `<server-ip>:2456-2458` | Same as Valheim; this stack pre-installs Thunderstore modpack support for Mistlands collections. |
+   | [Terraria / tModLoader](https://terraria.org/) | TCP: `<server-ip>:7777` | From the multiplayer menu, choose **Join via IP**, enter `<server-ip>` and port `7777`, then provide the server password if set. |
+   | [Don't Starve Together](https://www.klei.com/games/dont-starve-together) | TCP/UDP: `<server-ip>:10999` | Add the server via the in-game **Favorites** tab with `<server-ip>:10999`; share the cluster token/password with friends. |
+   | [Vintage Story](https://www.vintagestory.at/) | TCP: `<server-ip>:42420` | On the main menu, open **Join Game**, enter `<server-ip>` and port `42420`, then connect with the configured password if enabled. |
 
 ## System Prerequisites
 Before running Terraform, you must ensure:
@@ -147,4 +158,9 @@ ssh michael@192.168.86.38 "sudo docker logs -f <container_name>"
 | TF2 | `tf2-server` |
 | Xonotic | `xonotic-server` |
 | 0 A.D. | `zeroad-server` |
+| Valheim | `valheim-server` |
+| Valheim (Thunderstore) | `valheim-thunderstore-server` |
+| Terraria / tModLoader | `terraria-server` |
+| Don't Starve Together | `dont-starve-together-server` |
+| Vintage Story | `vintage-story-server` |
 

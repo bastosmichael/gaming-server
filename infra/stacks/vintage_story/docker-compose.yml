@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  vintage-story-server:
+    image: ghcr.io/andrewzah/vintagestory-server:latest
+    container_name: vintage-story-server
+    restart: unless-stopped
+    environment:
+      - "SERVER_NAME=Vintage Story Dedicated"
+      - SERVER_PASSWORD=changeme
+      - WORLD_NAME=SurvivalWorld
+      - TZ=UTC
+    volumes:
+      - vintage_story_data:/home/vs/serverdata
+    ports:
+      - "42420:42420/tcp"
+
+volumes:
+  vintage_story_data:

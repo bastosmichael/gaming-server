@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  valheim-thunderstore-server:
+    image: ghcr.io/lloesche/valheim-server
+    container_name: valheim-thunderstore-server
+    restart: unless-stopped
+    environment:
+      - "SERVER_NAME=Valheim - Mistlands"
+      - WORLD_NAME=MistlandsRealm
+      - SERVER_PASS=changeme
+      - SERVER_PORT=2456
+      - PUBLIC=1
+      - TZ=UTC
+      - THUNDERSTORE=true
+      - THUNDERSTORE_MODPACK=mistlands
+    volumes:
+      - valheim_thunderstore_config:/config
+      - valheim_thunderstore_worlds:/opt/valheim
+    ports:
+      - "2456:2456/udp"
+      - "2457:2457/udp"
+      - "2458:2458/udp"
+
+volumes:
+  valheim_thunderstore_config:
+  valheim_thunderstore_worlds:

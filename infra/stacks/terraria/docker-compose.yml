@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  terraria-server:
+    image: beardedio/terraria
+    container_name: terraria-server
+    restart: unless-stopped
+    environment:
+      - WORLD_FILENAME=Dedicated.wld
+      - WORLD_NAME=Dedicated
+      - MAX_PLAYERS=8
+      - PASSWORD=changeme
+      - "MOTD=Welcome to Terraria!"
+      - PORT=7777
+      - ENABLE_TMOD=true
+    volumes:
+      - terraria_worlds:/config
+    ports:
+      - "7777:7777/tcp"
+
+volumes:
+  terraria_worlds:

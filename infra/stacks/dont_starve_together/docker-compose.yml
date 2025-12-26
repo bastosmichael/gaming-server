@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  dont-starve-together-server:
+    image: starbix/dontstarvetogether
+    container_name: dont-starve-together-server
+    restart: unless-stopped
+    environment:
+      - DST_CLUSTER_TOKEN=changeme
+      - DST_SERVER_NAME=DST Dedicated
+      - DST_SERVER_PASSWORD=changeme
+      - DST_GAME_MODE=survival
+      - DST_MAX_PLAYERS=6
+    volumes:
+      - dst_cluster:/dst
+    ports:
+      - "10999:10999/udp"
+      - "10999:10999/tcp"
+
+volumes:
+  dst_cluster:
