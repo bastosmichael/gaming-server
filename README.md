@@ -70,7 +70,7 @@ infra/            # Terraform configuration
    | [Rust](https://rust.facepunch.com/) | Game: `<server-ip>:28015`, Query/RCON: `<server-ip>:28016` (UDP/TCP) | Press ``F1`` to open the console, run `connect <server-ip>:28015`. |
    | [ARK: Survival Evolved](https://store.steampowered.com/app/346110/ARK_Survival_Evolved/) | Game UDP: `<server-ip>:7777`, Alt UDP: `<server-ip>:7778`, Query UDP: `<server-ip>:27016` | In **Join ARK**, add the server to favorites with `steam://connect/<server-ip>:7777` or via the in-game favorites list using the game port (7777). |
    | [Counter-Strike 2](https://store.steampowered.com/app/730/CounterStrike_2/) | TCP/UDP: `<server-ip>:27015` | In the developer console, run `connect <server-ip>:27015`, or add the IP/port under Community Servers > Favorites. |
-   | [Minecraft](https://www.minecraft.net/) | TCP: `<server-ip>:25565` | **Paper 1.21.1**. Direct Connect to `<server-ip>` (port 25565). No Monsters, 12 Chunk Distance. |
+   | [Minecraft](https://www.minecraft.net/) | TCP: `<server-ip>:25565` | **Paper 1.21.11**. Direct Connect to `<server-ip>` (port 25565). No Monsters, 12 Chunk Distance. |
    | [Team Fortress 2](https://store.steampowered.com/app/440/Team_Fortress_2/) | TCP/UDP: `<server-ip>:27017` | Open **Browse Servers** → **Favorites** → **Add a Server**, enter `<server-ip>:27017`, then connect. |
    | [Garry’s Mod](https://store.steampowered.com/app/4000/Garrys_Mod/) | TCP/UDP: `<server-ip>:27018`, Extra UDP: `<server-ip>:27008` | In the main menu, open **Find Multiplayer Game** → **Legacy Browser** → **Favorites**, add `<server-ip>:27018`, then connect. |
    | [Insurgency: Sandstorm](https://store.steampowered.com/app/581320/Insurgency_Sandstorm/) | Game UDP: `<server-ip>:27102`, Query UDP: `<server-ip>:27131` | From the Play menu, use the server browser Filters → Favorites, add `<server-ip>:27102`, then refresh and join. |
@@ -81,7 +81,7 @@ infra/            # Terraform configuration
    | [Eco](https://store.steampowered.com/app/382310/Eco/) | TCP: `<server-ip>:3000`, UDP: `<server-ip>:3001` | From the main menu, open **Your Worlds** → **Join**, enter `<server-ip>:3000`, and connect. |
    | [Space Engineers](https://store.steampowered.com/app/244850/Space_Engineers/) | UDP: `<server-ip>:27019`, `<server-ip>:8766` | In the Join Game menu, switch to **Favorites**, add `<server-ip>:27019`, and connect after it appears. |
    | [Starbound](https://store.steampowered.com/app/211820/Starbound/) | TCP: `<server-ip>:21025` | From the main menu, click **Join Game**, enter `<server-ip>` and port `21025`, then join. |
-   | [Age of Empires II: Definitive Edition](https://www.ageofempires.com/games/aoeiide/) | UDP: `<server-ip>:27020`, `<server-ip>:27021` | Create or join a **Custom/LAN** lobby and direct connect to `<server-ip>:27020`; keep query port 27021 open for lobby visibility. |
+   | [Age of Empires II: Definitive Edition](https://www.ageofempires.com/games/aoeiide/) | UDP: `<server-ip>:27020`, `<server-ip>:27021` | **Placeholder**. Server is not currently functional (waiting for Wine image). |
    | [Palworld](https://store.steampowered.com/app/1623730/PALWORLD/) | UDP: `<server-ip>:8211`, Query UDP: `<server-ip>:27023` | In **Join Multiplayer** enter `<server-ip>:8211` (or share an invite code if enabled); keep query port 27023 open for listings. |
    | [Arma 3](https://store.steampowered.com/app/107410/Arma_3/) | UDP: `<server-ip>:2302-2305` | From the Launcher server browser, add `<server-ip>` to Favorites (default port 2302), refresh, and connect; ensure 2303-2305 remain open for Steam queries. |
    | [Minetest](https://www.minetest.net/) | UDP: `<server-ip>:30000` | In Multiplayer, click **Add Server** and enter `<server-ip>` with port `30000`, then join. |
@@ -109,9 +109,42 @@ Terraform uses SSH to connect to the server. Ensure you have:
 
 ## Debugging & Logs
 
-To check the logs for a specific server (e.g., CS2), you can SSH into the server and tail the Docker logs:
+To check the logs for a specific server, you can SSH into the server and use `docker logs`.
 
+**Command:**
 ```bash
-ssh michael@192.168.86.38 "sudo docker logs -f cs2-server"
+ssh michael@192.168.86.38 "sudo docker logs -f <container_name>"
 ```
+
+**Common Container Names:**
+
+| Service | Container Name |
+| --- | --- |
+| AoE II: DE | `aoe2de-server` |
+| ARK | `ark-server` |
+| Arma 3 | `arma3-server` |
+| CS2 | `cs2-server` |
+| Eco | `eco-server` |
+| Factorio | `factorio-server` |
+| Garry's Mod | `garrysmod-server` |
+| Insurgency: Sandstorm | `insurgency-sandstorm-server` |
+| ioquake3 | `ioquake3-server` |
+| Minecraft | `minecraft-server` |
+| Minetest | `minetest-server` |
+| OpenRA | `openra-server` |
+| OpenRCT2 | `openrct2-server` |
+| OpenTTD | `openttd-server` |
+| Palworld | `palworld-server` |
+| Portainer | `portainer` |
+| Rust | `rust-server` |
+| Satisfactory | `satisfactory-server` |
+| Space Engineers | `space-engineers-server` |
+| Squad | `squad-server` |
+| Squad 44 | `squad44-server` |
+| Starbound | `starbound-server` |
+| Teeworlds | `teeworlds-server` |
+| Teeworlds (DDNet) | `ddnet-server` |
+| TF2 | `tf2-server` |
+| Xonotic | `xonotic-server` |
+| 0 A.D. | `zeroad-server` |
 
