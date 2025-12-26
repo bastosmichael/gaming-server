@@ -1,6 +1,6 @@
 # Gaming Server
 
-This project manages a gaming server running various Docker stacks using Terraform, with a focus on self-hosted game servers plus a few media/tooling containers.
+This project manages a gaming server running various Docker stacks using Terraform, with a focus on self-hosted game servers and Portainer for management.
 
 ## Project Structure
 ```
@@ -14,8 +14,7 @@ infra/            # Terraform configuration
     ark/ cs2/ minecraft/ rust/ tf2/ garrysmod/ insurgency_sandstorm/ squad/ squad44/
     satisfactory/ factorio/ eco/ space_engineers/ starbound/ aoe2de/ palworld/ arma3/
     minetest/ openrct2/ openttd/ zeroad/ openra/ teeworlds/ xonotic/ ioquake3/
-    # Media & tooling
-    portainer/ ollama/ plex/ jellyfin/ immich/ navidrome/ audiobookshelf/ nextcloud/
+    portainer/
 ```
 
 ## Deployment
@@ -30,13 +29,6 @@ infra/            # Terraform configuration
      -var="docker_host=ssh://michael@192.168.86.38" \
      -var="cs2_gslt=YOUR_STEAM_TOKEN" \
      -var="enable_portainer=true" \
-     -var="enable_ollama=true" \
-     -var="enable_plex=true" \
-     -var="enable_jellyfin=true" \
-     -var="enable_immich=true" \
-     -var="enable_navidrome=true" \
-     -var="enable_audiobookshelf=true" \
-     -var="enable_nextcloud=true" \
      -var="enable_rust=true" \
      -var="enable_ark=true" \
      -var="enable_cs2=true" \
@@ -66,19 +58,10 @@ infra/            # Terraform configuration
 
    **Note:** replace `192.168.86.38` with your actual server IP.
 
-2. **Accessing Media & Tools:**
+2. **Accessing Portainer:**
    * **Portainer:** `http://<server-ip>:9000`
-   * **Ollama/Open WebUI:** `http://<server-ip>:3000` (if enabled)
-   * **Plex:** `http://<server-ip>:32400/web`
-   * **Jellyfin:** `http://<server-ip>:8096`
-   * **Immich:** `http://<server-ip>:2283`
-   * **Navidrome:** `http://<server-ip>:4533`
-   * **Audiobookshelf:** `http://<server-ip>:13378`
-   * **Nextcloud:** `http://<server-ip>:8080`
 
-   Terraform's remote bootstrap automatically opens UFW for HTTP/HTTPS (80/443), Open WebUI (3000), and every published media port above so the services bind to `0.0.0.0` and remain reachable externally.
-
-   Media stacks auto-mount `/mnt/coldstore` for their libraries if that directory exists; otherwise they fall back to the default `/opt/<service>` paths included in the Compose files.
+   Terraform's remote bootstrap automatically opens UFW for HTTP/HTTPS (80/443) and every game port configured in the Compose files so the services bind to `0.0.0.0` and remain reachable externally.
 
 3. **Game Server Catalog & Connection Info:** (links go to the official game pages and the ports reflect the Terraform Docker Compose stacks.)
 
