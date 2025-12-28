@@ -95,6 +95,11 @@ output "arma3_server_ports" {
   value       = var.enable_arma3 ? "2302-2305 (udp)" : "Arma 3 server not enabled"
 }
 
+output "roblox_studio_ports" {
+  description = "Roblox Studio web/VNC ports"
+  value       = var.enable_roblox ? "3100 (web), 3101 (VNC)" : "Roblox Studio not enabled"
+}
+
 output "deployed_stacks" {
   description = "List of deployed stacks"
   value = concat(
@@ -115,6 +120,7 @@ output "deployed_stacks" {
     var.enable_starbound ? ["starbound"] : [],
     var.enable_aoe2de ? ["aoe2de"] : [],
     var.enable_palworld ? ["palworld"] : [],
-    var.enable_arma3 ? ["arma3"] : []
+    var.enable_arma3 ? ["arma3"] : [],
+    var.enable_roblox ? ["roblox"] : []
   )
 }

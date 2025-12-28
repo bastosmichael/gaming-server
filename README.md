@@ -13,7 +13,7 @@ infra/            # Terraform configuration
     # Game servers
     ark/ cs2/ minecraft/ rust/ tf2/ garrysmod/ insurgency_sandstorm/ squad/ squad44/
     satisfactory/ factorio/ eco/ space_engineers/ starbound/ aoe2de/ palworld/ arma3/
-    minetest/ openrct2/ openttd/ zeroad/ openra/ teeworlds/ xonotic/ ioquake3/
+    minetest/ openrct2/ openttd/ zeroad/ openra/ teeworlds/ xonotic/ ioquake3/ roblox/
     portainer/
 ```
 
@@ -53,7 +53,8 @@ infra/            # Terraform configuration
      -var="enable_openra=true" \
      -var="enable_teeworlds=true" \
      -var="enable_xonotic=true" \
-     -var="enable_ioquake3=true"
+     -var="enable_ioquake3=true" \
+     -var="enable_roblox=true"
    ```
 
    **Note:** replace `192.168.86.38` with your actual server IP.
@@ -92,6 +93,9 @@ infra/            # Terraform configuration
    | [Teeworlds / DDNet](https://www.teeworlds.com/) | UDP: `<server-ip>:8303` (Teeworlds), `<server-ip>:8304` (DDNet) | Add `<server-ip>:8303` to favorites in the in-game browser for vanilla, or `<server-ip>:8304` for DDNet; refresh and join. |
    | [Xonotic](https://xonotic.org/) | UDP/TCP: `<server-ip>:26000` | Open **Multiplayer** → **Servers**, add a favorite or console connect to `<server-ip>:26000`. |
    | [ioquake3 / Quake 3](https://ioquake3.org/) | UDP: `<server-ip>:27960` | Open the console and run `connect <server-ip>:27960`, or add a favorite server with that address. |
+   | Roblox Studio (Webtop) | TCP: `<server-ip>:3100` (web), TCP: `<server-ip>:3101` (noVNC) | Open `http://<server-ip>:3100` in your browser, authenticate with the password from the compose file (`PASSWORD`, defaults to `change-me`), then install/run Roblox Studio from the desktop session. |
+
+   **Roblox Studio security tip:** Update the `PASSWORD` environment variable in `infra/stacks/roblox/docker-compose.yml` before deploying so the remote desktop is protected.
 
 ## System Prerequisites
 Before running Terraform, you must ensure:
@@ -144,6 +148,7 @@ ssh michael@192.168.86.38 "sudo docker logs -f <container_name>"
 | Starbound | `starbound-server` |
 | Teeworlds | `teeworlds-server` |
 | Teeworlds (DDNet) | `ddnet-server` |
+| Roblox Studio | `roblox-studio` |
 | TF2 | `tf2-server` |
 | Xonotic | `xonotic-server` |
 | 0 A.D. | `zeroad-server` |

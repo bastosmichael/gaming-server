@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  roblox-studio:
+    image: lscr.io/linuxserver/webtop:ubuntu-mate
+    container_name: roblox-studio
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - TITLE=Roblox Studio
+      - PASSWORD=change-me
+    ports:
+      - "3100:3000"
+      - "3101:3001"
+    shm_size: "2gb"
+    volumes:
+      - ./config:/config
+      - ./workspace:/workspace
+    security_opt:
+      - seccomp=unconfined
+    cap_add:
+      - SYS_ADMIN

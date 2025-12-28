@@ -40,7 +40,7 @@ resource "null_resource" "bootstrap_docker" {
       # "sudo usermod -aG docker $USER || true",
 
       # Create stack dirs
-      "sudo mkdir -p /opt/portainer /opt/rust-server /opt/ark /opt/cs2 /opt/minecraft /opt/tf2 /opt/garrysmod /opt/insurgency-sandstorm /opt/squad /opt/squad44 /opt/satisfactory /opt/factorio /opt/eco /opt/space-engineers /opt/starbound /opt/aoe2de /opt/palworld /opt/arma3 /opt/minetest /opt/openrct2 /opt/openttd /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3",
+      "sudo mkdir -p /opt/portainer /opt/rust-server /opt/ark /opt/cs2 /opt/minecraft /opt/tf2 /opt/garrysmod /opt/insurgency-sandstorm /opt/squad /opt/squad44 /opt/satisfactory /opt/factorio /opt/eco /opt/space-engineers /opt/starbound /opt/aoe2de /opt/palworld /opt/arma3 /opt/minetest /opt/openrct2 /opt/openttd /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 /opt/roblox",
       "sudo mkdir -p /opt/cs2/data",
       "sudo chown -R 1000:1000 /opt/cs2/data || true",
     ]
@@ -84,6 +84,7 @@ resource "null_resource" "deploy_stacks" {
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/teeworlds/docker-compose.yml" "$USER@$HOST:/tmp/teeworlds.docker-compose.yml"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/xonotic/docker-compose.yml" "$USER@$HOST:/tmp/xonotic.docker-compose.yml"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/ioquake3/docker-compose.yml" "$USER@$HOST:/tmp/ioquake3.docker-compose.yml"
+      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/roblox/docker-compose.yml" "$USER@$HOST:/tmp/roblox.docker-compose.yml"
 
       # Execute Remote Setup via SSH
       ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$USER@$HOST" 'bash -s' <<'REMOTE_SCRIPT'
@@ -133,12 +134,12 @@ resource "null_resource" "deploy_stacks" {
         # Ensure directories exist (in case bootstrap didn't run or new ones matched)
         sudo mkdir -p /opt/portainer /opt/rust-server /opt/ark /opt/cs2 /opt/minecraft /opt/tf2 /opt/garrysmod /opt/insurgency-sandstorm /opt/squad /opt/squad44 /opt/satisfactory /opt/factorio \
           /opt/eco /opt/space-engineers /opt/starbound /opt/aoe2de /opt/palworld /opt/arma3 /opt/minetest /opt/openrct2 \
-          /opt/openttd /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3
+          /opt/openttd /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 /opt/roblox
         sudo mkdir -p /opt/cs2/data
         sudo chown -R 1000:1000 /opt/cs2/data /opt/ark /opt/portainer /opt/rust-server /opt/minecraft \
           /opt/tf2 /opt/garrysmod /opt/insurgency-sandstorm /opt/squad /opt/squad44 /opt/satisfactory /opt/factorio /opt/eco \
           /opt/space-engineers /opt/starbound /opt/aoe2de /opt/palworld /opt/arma3 /opt/minetest /opt/openrct2 /opt/openttd \
-          /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 || true
+          /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 /opt/roblox || true
 
         # Configure Firewall (UFW)
         echo "Configuring Firewall..."
@@ -147,6 +148,8 @@ resource "null_resource" "deploy_stacks" {
         sudo ufw allow 443/tcp # HTTPS (reverse proxies / direct web access)
         sudo ufw allow 8000/tcp # Portainer
         sudo ufw allow 9000/tcp # Portainer
+        sudo ufw allow 3100/tcp # Roblox Studio (web)
+        sudo ufw allow 3101/tcp # Roblox Studio (VNC)
         sudo ufw allow 28015:28016/udp # Rust
         sudo ufw allow 28015:28016/tcp # Rust RCON
         sudo ufw allow 7777:7778/udp # Ark
@@ -219,6 +222,7 @@ resource "null_resource" "deploy_stacks" {
         sudo mv /tmp/teeworlds.docker-compose.yml /opt/teeworlds/docker-compose.yml
         sudo mv /tmp/xonotic.docker-compose.yml /opt/xonotic/docker-compose.yml
         sudo mv /tmp/ioquake3.docker-compose.yml /opt/ioquake3/docker-compose.yml
+        sudo mv /tmp/roblox.docker-compose.yml /opt/roblox/docker-compose.yml
 
         # Handle CS2 Template Replacement
         sudo mkdir -p /opt/cs2
@@ -252,6 +256,7 @@ resource "null_resource" "deploy_stacks" {
         ${var.enable_teeworlds ? "cd /opt/teeworlds && (sudo docker rm -f teeworlds-server ddnet-server || true) && retry sudo docker compose up -d && check_and_pause teeworlds-server 60" : "echo 'Skipping Teeworlds/DDNet'"}
         ${var.enable_xonotic ? "cd /opt/xonotic && (sudo docker rm -f xonotic-server || true) && retry sudo docker compose up -d && check_and_pause xonotic-server 60" : "echo 'Skipping Xonotic'"}
         ${var.enable_ioquake3 ? "cd /opt/ioquake3 && (sudo docker rm -f ioquake3-server || true) && retry sudo docker compose up -d && check_and_pause ioquake3-server 60" : "echo 'Skipping ioquake3'"}
+        ${var.enable_roblox ? "cd /opt/roblox && (sudo docker rm -f roblox-studio || true) && retry sudo docker compose up -d" : "echo 'Skipping Roblox Studio'"}
 REMOTE_SCRIPT
     EOT
   }
