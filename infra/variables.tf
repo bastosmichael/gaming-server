@@ -160,6 +160,36 @@ variable "enable_ioquake3" {
   default     = false
 }
 
+variable "enable_valheim" {
+  description = "Enable Valheim server deployment"
+  type        = bool
+  default     = false
+}
+
+variable "enable_valheim_thunderstore" {
+  description = "Enable Valheim Thunderstore (Mistlands-ready) server deployment"
+  type        = bool
+  default     = false
+}
+
+variable "enable_terraria" {
+  description = "Enable Terraria / tModLoader server deployment"
+  type        = bool
+  default     = false
+}
+
+variable "enable_dont_starve_together" {
+  description = "Enable Don't Starve Together server deployment"
+  type        = bool
+  default     = false
+}
+
+variable "enable_vintage_story" {
+  description = "Enable Vintage Story server deployment"
+  type        = bool
+  default     = false
+}
+
 variable "enable_roblox" {
   description = "Enable Roblox Studio remote desktop deployment"
   type        = bool

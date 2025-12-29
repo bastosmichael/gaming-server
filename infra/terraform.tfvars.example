@@ -32,6 +32,11 @@ enable_openra    = false
 enable_teeworlds = false
 enable_xonotic   = false
 enable_ioquake3  = false
+enable_valheim   = false
+enable_valheim_thunderstore = false
+enable_terraria  = false
+enable_dont_starve_together = false
+enable_vintage_story = false
 enable_roblox    = false
 
 # ARK Server Configuration (only required if enable_ark = true)

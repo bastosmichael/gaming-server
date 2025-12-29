@@ -65,6 +65,11 @@ resource "null_resource" "deploy_stacks" {
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/teeworlds/docker-compose.yml" "$USER@$HOST:/tmp/teeworlds.docker-compose.yml"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/xonotic/docker-compose.yml" "$USER@$HOST:/tmp/xonotic.docker-compose.yml"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/ioquake3/docker-compose.yml" "$USER@$HOST:/tmp/ioquake3.docker-compose.yml"
+      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/valheim/docker-compose.yml" "$USER@$HOST:/tmp/valheim.docker-compose.yml"
+      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/valheim_thunderstore/docker-compose.yml" "$USER@$HOST:/tmp/valheim_thunderstore.docker-compose.yml"
+      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/terraria/docker-compose.yml" "$USER@$HOST:/tmp/terraria.docker-compose.yml"
+      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/dont_starve_together/docker-compose.yml" "$USER@$HOST:/tmp/dont_starve_together.docker-compose.yml"
+      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/vintage_story/docker-compose.yml" "$USER@$HOST:/tmp/vintage_story.docker-compose.yml"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/roblox/docker-compose.yml" "$USER@$HOST:/tmp/roblox.docker-compose.yml"
 
       # Execute Remote Setup via SSH
@@ -115,12 +120,13 @@ resource "null_resource" "deploy_stacks" {
         # Ensure directories exist (in case bootstrap didn't run or new ones matched)
         sudo mkdir -p /opt/portainer /opt/rust-server /opt/ark /opt/cs2 /opt/minecraft /opt/tf2 /opt/garrysmod /opt/insurgency-sandstorm /opt/squad /opt/squad44 /opt/satisfactory /opt/factorio \
           /opt/eco /opt/space-engineers /opt/starbound /opt/aoe2de /opt/palworld /opt/arma3 /opt/minetest /opt/openrct2 \
-          /opt/openttd /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 /opt/roblox
+          /opt/openttd /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 /opt/valheim /opt/valheim-thunderstore /opt/terraria /opt/dont-starve-together /opt/vintage-story /opt/roblox
         sudo mkdir -p /opt/cs2/data
         sudo chown -R 1000:1000 /opt/cs2/data /opt/ark /opt/portainer /opt/rust-server /opt/minecraft \
           /opt/tf2 /opt/garrysmod /opt/insurgency-sandstorm /opt/squad /opt/squad44 /opt/satisfactory /opt/factorio /opt/eco \
           /opt/space-engineers /opt/starbound /opt/aoe2de /opt/palworld /opt/arma3 /opt/minetest /opt/openrct2 /opt/openttd \
-          /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 /opt/roblox || true
+          /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 /opt/valheim /opt/valheim-thunderstore /opt/terraria \
+          /opt/dont-starve-together /opt/vintage-story /opt/roblox || true
 
         # Configure Firewall (UFW)
         echo "Configuring Firewall..."
@@ -175,6 +181,11 @@ resource "null_resource" "deploy_stacks" {
         sudo ufw allow 26000/udp     # Xonotic
         sudo ufw allow 26000/tcp     # Xonotic
         sudo ufw allow 27960/udp     # ioquake3 / Quake 3
+        sudo ufw allow 2456:2458/udp # Valheim
+        sudo ufw allow 7777/tcp      # Terraria / tModLoader
+        sudo ufw allow 10999/udp     # Don't Starve Together
+        sudo ufw allow 10999/tcp     # Don't Starve Together Query
+        sudo ufw allow 42420/tcp     # Vintage Story
         sudo ufw --force enable || true
 
         # Move files to correct locations
@@ -203,6 +214,11 @@ resource "null_resource" "deploy_stacks" {
         sudo mv /tmp/teeworlds.docker-compose.yml /opt/teeworlds/docker-compose.yml
         sudo mv /tmp/xonotic.docker-compose.yml /opt/xonotic/docker-compose.yml
         sudo mv /tmp/ioquake3.docker-compose.yml /opt/ioquake3/docker-compose.yml
+        sudo mv /tmp/valheim.docker-compose.yml /opt/valheim/docker-compose.yml
+        sudo mv /tmp/valheim_thunderstore.docker-compose.yml /opt/valheim-thunderstore/docker-compose.yml
+        sudo mv /tmp/terraria.docker-compose.yml /opt/terraria/docker-compose.yml
+        sudo mv /tmp/dont_starve_together.docker-compose.yml /opt/dont-starve-together/docker-compose.yml
+        sudo mv /tmp/vintage_story.docker-compose.yml /opt/vintage-story/docker-compose.yml
         sudo mv /tmp/roblox.docker-compose.yml /opt/roblox/docker-compose.yml
 
         # Handle CS2 Template Replacement
@@ -237,6 +253,11 @@ resource "null_resource" "deploy_stacks" {
         ${var.enable_teeworlds ? "cd /opt/teeworlds && (sudo docker rm -f teeworlds-server ddnet-server || true) && retry sudo docker compose up -d && check_and_pause teeworlds-server 60" : "echo 'Skipping Teeworlds/DDNet'"}
         ${var.enable_xonotic ? "cd /opt/xonotic && (sudo docker rm -f xonotic-server || true) && retry sudo docker compose up -d && check_and_pause xonotic-server 60" : "echo 'Skipping Xonotic'"}
         ${var.enable_ioquake3 ? "cd /opt/ioquake3 && (sudo docker rm -f ioquake3-server || true) && retry sudo docker compose up -d && check_and_pause ioquake3-server 60" : "echo 'Skipping ioquake3'"}
+        ${var.enable_valheim ? "cd /opt/valheim && (sudo docker rm -f valheim-server || true) && retry sudo docker compose up -d && check_and_pause valheim-server 120" : "echo 'Skipping Valheim'"}
+        ${var.enable_valheim_thunderstore ? "cd /opt/valheim-thunderstore && (sudo docker rm -f valheim-thunderstore-server || true) && retry sudo docker compose up -d && check_and_pause valheim-thunderstore-server 180" : "echo 'Skipping Valheim (Thunderstore)'"}
+        ${var.enable_terraria ? "cd /opt/terraria && (sudo docker rm -f terraria-server || true) && retry sudo docker compose up -d && check_and_pause terraria-server 60" : "echo 'Skipping Terraria / tModLoader'"}
+        ${var.enable_dont_starve_together ? "cd /opt/dont-starve-together && (sudo docker rm -f dont-starve-together-server || true) && retry sudo docker compose up -d && check_and_pause dont-starve-together-server 120" : "echo 'Skipping Don't Starve Together'"}
+        ${var.enable_vintage_story ? "cd /opt/vintage-story && (sudo docker rm -f vintage-story-server || true) && retry sudo docker compose up -d && check_and_pause vintage-story-server 60" : "echo 'Skipping Vintage Story'"}
         ${var.enable_roblox ? "cd /opt/roblox && (sudo docker rm -f roblox-studio || true) && retry sudo docker compose up -d" : "echo 'Skipping Roblox Studio'"}
 REMOTE_SCRIPT
     EOT
