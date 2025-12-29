@@ -12,38 +12,19 @@ terraform {
 provider "null" {}
 
 resource "null_resource" "bootstrap_docker" {
-  connection {
-    type = "ssh"
-    host = replace(var.docker_host, "ssh://michael@", "") # Extract IP from docker_host string
-    user = "michael"
-    # Agent is used automatically
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      # Basic deps
-      # "sudo apt-get update -y",
-      # "sudo apt-get install -y ca-certificates curl gnupg lsb-release",
-
-      # Install Docker Engine + compose plugin (official repo)
-      # "sudo install -m 0755 -d /etc/apt/keyrings",
-      # "sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc",
-      # "sudo chmod a+r /etc/apt/keyrings/docker.asc",
-      # "sudo bash -lc 'source /etc/os-release; cat > /etc/apt/sources.list.d/docker.sources <<EOF\nTypes: deb\nURIs: https://download.docker.com/linux/ubuntu\nSuites: $${UBUNTU_CODENAME:-$VERSION_CODENAME}\nComponents: stable\nSigned-By: /etc/apt/keyrings/docker.asc\nEOF'",
-      # "sudo apt-get update -y",
-      # "sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin",
-
-      # Enable docker at boot
-      # "sudo systemctl enable --now docker",
-
-      # Ensure current user is in docker group (requires relogin, but good for future)
-      # "sudo usermod -aG docker $USER || true",
-
-      # Create stack dirs
-      "sudo mkdir -p /opt/portainer /opt/rust-server /opt/ark /opt/cs2 /opt/minecraft /opt/tf2 /opt/garrysmod /opt/insurgency-sandstorm /opt/squad /opt/squad44 /opt/satisfactory /opt/factorio /opt/eco /opt/space-engineers /opt/starbound /opt/aoe2de /opt/palworld /opt/arma3 /opt/minetest /opt/openrct2 /opt/openttd /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 /opt/roblox",
-      "sudo mkdir -p /opt/cs2/data",
-      "sudo chown -R 1000:1000 /opt/cs2/data || true",
-    ]
+  provisioner "local-exec" {
+    command = <<EOT
+      HOST="${replace(var.docker_host, "ssh://michael@", "")}"
+      USER="michael"
+      
+      # Use system ssh to avoid terraform ssh agent issues
+      ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$USER@$HOST" '
+        # Create stack dirs
+        sudo mkdir -p /opt/portainer /opt/rust-server /opt/ark /opt/cs2 /opt/minecraft /opt/tf2 /opt/garrysmod /opt/insurgency-sandstorm /opt/squad /opt/squad44 /opt/satisfactory /opt/factorio /opt/eco /opt/space-engineers /opt/starbound /opt/aoe2de /opt/palworld /opt/arma3 /opt/minetest /opt/openrct2 /opt/openttd /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 /opt/roblox
+        sudo mkdir -p /opt/cs2/data
+        sudo chown -R 1000:1000 /opt/cs2/data || true
+      '
+    EOT
   }
 }
 
