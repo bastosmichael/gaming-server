@@ -12,38 +12,19 @@ terraform {
 provider "null" {}
 
 resource "null_resource" "bootstrap_docker" {
-  connection {
-    type = "ssh"
-    host = replace(var.docker_host, "ssh://michael@", "") # Extract IP from docker_host string
-    user = "michael"
-    # Agent is used automatically
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      # Basic deps
-      # "sudo apt-get update -y",
-      # "sudo apt-get install -y ca-certificates curl gnupg lsb-release",
-
-      # Install Docker Engine + compose plugin (official repo)
-      # "sudo install -m 0755 -d /etc/apt/keyrings",
-      # "sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc",
-      # "sudo chmod a+r /etc/apt/keyrings/docker.asc",
-      # "sudo bash -lc 'source /etc/os-release; cat > /etc/apt/sources.list.d/docker.sources <<EOF\nTypes: deb\nURIs: https://download.docker.com/linux/ubuntu\nSuites: $${UBUNTU_CODENAME:-$VERSION_CODENAME}\nComponents: stable\nSigned-By: /etc/apt/keyrings/docker.asc\nEOF'",
-      # "sudo apt-get update -y",
-      # "sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin",
-
-      # Enable docker at boot
-      # "sudo systemctl enable --now docker",
-
-      # Ensure current user is in docker group (requires relogin, but good for future)
-      # "sudo usermod -aG docker $USER || true",
-
-      # Create stack dirs
-      "sudo mkdir -p /opt/portainer /opt/rust-server /opt/ark /opt/cs2 /opt/minecraft /opt/tf2 /opt/garrysmod /opt/insurgency-sandstorm /opt/squad /opt/squad44 /opt/satisfactory /opt/factorio /opt/eco /opt/space-engineers /opt/starbound /opt/aoe2de /opt/palworld /opt/arma3 /opt/minetest /opt/openrct2 /opt/openttd /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 /opt/valheim /opt/valheim-thunderstore /opt/terraria /opt/dont-starve-together /opt/vintage-story",
-      "sudo mkdir -p /opt/cs2/data",
-      "sudo chown -R 1000:1000 /opt/cs2/data || true",
-    ]
+  provisioner "local-exec" {
+    command = <<EOT
+      HOST="${replace(var.docker_host, "ssh://michael@", "")}"
+      USER="michael"
+      
+      # Use system ssh to avoid terraform ssh agent issues
+      ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$USER@$HOST" '
+        # Create stack dirs
+        sudo mkdir -p /opt/portainer /opt/rust-server /opt/ark /opt/cs2 /opt/minecraft /opt/tf2 /opt/garrysmod /opt/insurgency-sandstorm /opt/squad /opt/squad44 /opt/satisfactory /opt/factorio /opt/eco /opt/space-engineers /opt/starbound /opt/aoe2de /opt/palworld /opt/arma3 /opt/minetest /opt/openrct2 /opt/openttd /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 /opt/roblox
+        sudo mkdir -p /opt/cs2/data
+        sudo chown -R 1000:1000 /opt/cs2/data || true
+      '
+    EOT
   }
 }
 
@@ -89,6 +70,7 @@ resource "null_resource" "deploy_stacks" {
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/terraria/docker-compose.yml" "$USER@$HOST:/tmp/terraria.docker-compose.yml"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/dont_starve_together/docker-compose.yml" "$USER@$HOST:/tmp/dont_starve_together.docker-compose.yml"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/vintage_story/docker-compose.yml" "$USER@$HOST:/tmp/vintage_story.docker-compose.yml"
+      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/roblox/docker-compose.yml" "$USER@$HOST:/tmp/roblox.docker-compose.yml"
 
       # Execute Remote Setup via SSH
       ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$USER@$HOST" 'bash -s' <<'REMOTE_SCRIPT'
@@ -138,13 +120,13 @@ resource "null_resource" "deploy_stacks" {
         # Ensure directories exist (in case bootstrap didn't run or new ones matched)
         sudo mkdir -p /opt/portainer /opt/rust-server /opt/ark /opt/cs2 /opt/minecraft /opt/tf2 /opt/garrysmod /opt/insurgency-sandstorm /opt/squad /opt/squad44 /opt/satisfactory /opt/factorio \
           /opt/eco /opt/space-engineers /opt/starbound /opt/aoe2de /opt/palworld /opt/arma3 /opt/minetest /opt/openrct2 \
-          /opt/openttd /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 /opt/valheim /opt/valheim-thunderstore /opt/terraria /opt/dont-starve-together /opt/vintage-story
+          /opt/openttd /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 /opt/valheim /opt/valheim-thunderstore /opt/terraria /opt/dont-starve-together /opt/vintage-story /opt/roblox
         sudo mkdir -p /opt/cs2/data
         sudo chown -R 1000:1000 /opt/cs2/data /opt/ark /opt/portainer /opt/rust-server /opt/minecraft \
           /opt/tf2 /opt/garrysmod /opt/insurgency-sandstorm /opt/squad /opt/squad44 /opt/satisfactory /opt/factorio /opt/eco \
           /opt/space-engineers /opt/starbound /opt/aoe2de /opt/palworld /opt/arma3 /opt/minetest /opt/openrct2 /opt/openttd \
           /opt/zeroad /opt/openra /opt/teeworlds /opt/xonotic /opt/ioquake3 /opt/valheim /opt/valheim-thunderstore /opt/terraria \
-          /opt/dont-starve-together /opt/vintage-story || true
+          /opt/dont-starve-together /opt/vintage-story /opt/roblox || true
 
         # Configure Firewall (UFW)
         echo "Configuring Firewall..."
@@ -153,6 +135,8 @@ resource "null_resource" "deploy_stacks" {
         sudo ufw allow 443/tcp # HTTPS (reverse proxies / direct web access)
         sudo ufw allow 8000/tcp # Portainer
         sudo ufw allow 9000/tcp # Portainer
+        sudo ufw allow 3100/tcp # Roblox Studio (web)
+        sudo ufw allow 3101/tcp # Roblox Studio (VNC)
         sudo ufw allow 28015:28016/udp # Rust
         sudo ufw allow 28015:28016/tcp # Rust RCON
         sudo ufw allow 7777:7778/udp # Ark
@@ -235,6 +219,7 @@ resource "null_resource" "deploy_stacks" {
         sudo mv /tmp/terraria.docker-compose.yml /opt/terraria/docker-compose.yml
         sudo mv /tmp/dont_starve_together.docker-compose.yml /opt/dont-starve-together/docker-compose.yml
         sudo mv /tmp/vintage_story.docker-compose.yml /opt/vintage-story/docker-compose.yml
+        sudo mv /tmp/roblox.docker-compose.yml /opt/roblox/docker-compose.yml
 
         # Handle CS2 Template Replacement
         sudo mkdir -p /opt/cs2
@@ -273,6 +258,7 @@ resource "null_resource" "deploy_stacks" {
         ${var.enable_terraria ? "cd /opt/terraria && (sudo docker rm -f terraria-server || true) && retry sudo docker compose up -d && check_and_pause terraria-server 60" : "echo 'Skipping Terraria / tModLoader'"}
         ${var.enable_dont_starve_together ? "cd /opt/dont-starve-together && (sudo docker rm -f dont-starve-together-server || true) && retry sudo docker compose up -d && check_and_pause dont-starve-together-server 120" : "echo 'Skipping Don't Starve Together'"}
         ${var.enable_vintage_story ? "cd /opt/vintage-story && (sudo docker rm -f vintage-story-server || true) && retry sudo docker compose up -d && check_and_pause vintage-story-server 60" : "echo 'Skipping Vintage Story'"}
+        ${var.enable_roblox ? "cd /opt/roblox && (sudo docker rm -f roblox-studio || true) && retry sudo docker compose up -d" : "echo 'Skipping Roblox Studio'"}
 REMOTE_SCRIPT
     EOT
   }

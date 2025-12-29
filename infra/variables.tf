@@ -190,6 +190,12 @@ variable "enable_vintage_story" {
   default     = false
 }
 
+variable "enable_roblox" {
+  description = "Enable Roblox Studio remote desktop deployment"
+  type        = bool
+  default     = false
+}
+
 # Server Configuration Variables
 variable "ark_server_password" {
   description = "ARK server password (leave empty for no password)"

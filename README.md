@@ -14,7 +14,7 @@ infra/            # Terraform configuration
     ark/ cs2/ minecraft/ rust/ tf2/ garrysmod/ insurgency_sandstorm/ squad/ squad44/
     satisfactory/ factorio/ eco/ space_engineers/ starbound/ aoe2de/ palworld/ arma3/
     minetest/ openrct2/ openttd/ zeroad/ openra/ teeworlds/ xonotic/ ioquake3/
-    valheim/ valheim_thunderstore/ terraria/ dont_starve_together/ vintage_story/
+    valheim/ valheim_thunderstore/ terraria/ dont_starve_together/ vintage_story/ roblox/
     portainer/
 ```
 
@@ -59,7 +59,8 @@ infra/            # Terraform configuration
      -var="enable_valheim_thunderstore=true" \
      -var="enable_terraria=true" \
      -var="enable_dont_starve_together=true" \
-     -var="enable_vintage_story=true"
+     -var="enable_vintage_story=true" \
+     -var="enable_roblox=true"
    ```
 
    **Note:** replace `192.168.86.38` with your actual server IP.
@@ -103,6 +104,9 @@ infra/            # Terraform configuration
    | [Terraria / tModLoader](https://terraria.org/) | TCP: `<server-ip>:7777` | From the multiplayer menu, choose **Join via IP**, enter `<server-ip>` and port `7777`, then provide the server password if set. |
    | [Don't Starve Together](https://www.klei.com/games/dont-starve-together) | TCP/UDP: `<server-ip>:10999` | Add the server via the in-game **Favorites** tab with `<server-ip>:10999`; share the cluster token/password with friends. |
    | [Vintage Story](https://www.vintagestory.at/) | TCP: `<server-ip>:42420` | On the main menu, open **Join Game**, enter `<server-ip>` and port `42420`, then connect with the configured password if enabled. |
+   | Roblox Studio (Webtop) | TCP: `<server-ip>:3100` (web), TCP: `<server-ip>:3101` (noVNC) | Open `http://<server-ip>:3100` in your browser, authenticate with the password from the compose file (`PASSWORD`, defaults to `change-me`), then install/run Roblox Studio from the desktop session. |
+
+   **Roblox Studio security tip:** Update the `PASSWORD` environment variable in `infra/stacks/roblox/docker-compose.yml` before deploying so the remote desktop is protected.
 
 ## System Prerequisites
 Before running Terraform, you must ensure:
@@ -155,6 +159,7 @@ ssh michael@192.168.86.38 "sudo docker logs -f <container_name>"
 | Starbound | `starbound-server` |
 | Teeworlds | `teeworlds-server` |
 | Teeworlds (DDNet) | `ddnet-server` |
+| Roblox Studio | `roblox-studio` |
 | TF2 | `tf2-server` |
 | Xonotic | `xonotic-server` |
 | 0 A.D. | `zeroad-server` |
