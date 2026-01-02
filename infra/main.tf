@@ -283,7 +283,7 @@ resource "null_resource" "deploy_stacks" {
         ${var.enable_openra ? "cd /opt/openra && (sudo docker rm -f openra-server || true) && retry sudo docker compose up -d && check_and_pause openra-server 60" : "echo 'Skipping OpenRA'"}
         ${var.enable_teeworlds ? "cd /opt/teeworlds && (sudo docker rm -f teeworlds-server ddnet-server || true) && retry sudo docker compose up -d && check_and_pause teeworlds-server 60" : "echo 'Skipping Teeworlds/DDNet'"}
         ${var.enable_xonotic ? "cd /opt/xonotic && (sudo docker rm -f xonotic-server || true) && retry sudo docker compose up -d && check_and_pause xonotic-server 60" : "echo 'Skipping Xonotic'"}
-        ${var.enable_ioquake3 ? "cd /opt/ioquake3 && (sudo docker rm -f ioquake3-server || true) && retry sudo docker compose up -d && check_and_pause ioquake3-server 60" : "echo 'Skipping ioquake3'"}
+        ${var.enable_ioquake3 ? "cd /opt/ioquake3 && (sudo docker rm -f ioquake3-server || true) && retry sudo docker compose up -d && check_and_pause ioquake3-server 300" : "echo 'Skipping ioquake3'"}
         ${var.enable_valheim ? "cd /opt/valheim && (sudo docker rm -f valheim-server || true) && retry sudo docker compose up -d && check_and_pause valheim-server 120" : "echo 'Skipping Valheim'"}
         ${var.enable_valheim_thunderstore ? "cd /opt/valheim-thunderstore && (sudo docker rm -f valheim-thunderstore-server || true) && retry sudo docker compose up -d && check_and_pause valheim-thunderstore-server 180" : "echo 'Skipping Valheim (Thunderstore)'"}
         ${var.enable_terraria ? "cd /opt/terraria && (sudo docker rm -f terraria-server || true) && retry sudo docker compose up -d && check_and_pause terraria-server 60" : "echo 'Skipping Terraria / tModLoader'"}

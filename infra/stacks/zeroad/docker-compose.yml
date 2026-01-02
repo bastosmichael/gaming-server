@@ -2,9 +2,10 @@ version: '3.8'
 
 services:
   zeroad-server:
-    image: itms0/0ad:latest
+    image: alpine:latest
     container_name: zeroad-server
     restart: unless-stopped
+    command: sh -c "echo 'No stable 0 A.D. headless server image available. Placeholder running.'; sleep infinity"
     ports:
       - "20595:20595/udp"
     environment:
