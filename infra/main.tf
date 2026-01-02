@@ -98,20 +98,51 @@ resource "null_resource" "deploy_stacks" {
         # Helper to validate container health before pausing
         function check_and_pause {
           local container_name=$1
-          local wait_time=$${2:-60}
-          echo "Waiting $${wait_time}s for $container_name to initialize..."
-          sleep $${wait_time}
-          
-          # Check if container is currently running (not exited/restarting)
-          if sudo docker ps --filter "name=$container_name" --filter "status=running" --format "{{.Names}}" | grep -q "^$container_name$"; then
-            echo "SUCCESS: $container_name is healthy and running. Pausing now to save RAM..."
-            sudo docker compose pause
-          else
-            echo "ERROR: $container_name is NOT running after start-up period. It may have crashed."
-            echo "Recent logs for $container_name:"
-            sudo docker logs --tail 20 "$container_name" || true
-            # We do NOT pause if it's broken, so valid logs are preserved/visible in Portainer
+          local max_wait=$${2:-60}
+
+          # Skip pausing Portainer itself so it remains usable
+          if [ "$container_name" = "portainer" ]; then
+            echo "Skipping pause for Portainer."
+            return 0
           fi
+
+          echo "Waiting up to $${max_wait}s for $container_name to finish initializing..."
+          local waited=0
+
+          # Poll until the container is running or a fatal state is hit
+          while [ $waited -lt $max_wait ]; do
+            local status
+            status=$(sudo docker inspect -f '{{.State.Status}}' "$container_name" 2>/dev/null || echo "missing")
+
+            case "$status" in
+              running)
+                echo "SUCCESS: $container_name is healthy and running after $${waited}s. Pausing now to save RAM..."
+                sudo docker compose pause
+                return 0
+                ;;
+              exited|dead)
+                echo "ERROR: $container_name exited before it became healthy (status: $status)."
+                echo "Recent logs for $container_name:"
+                sudo docker logs --tail 20 "$container_name" || true
+                return 1
+                ;;
+              missing)
+                echo "Waiting: $container_name not created yet ($${waited}s/$${max_wait}s)..."
+                ;;
+              *)
+                echo "Waiting: $container_name status is $status ($${waited}s/$${max_wait}s)..."
+                ;;
+            esac
+
+            sleep 5
+            waited=$((waited + 5))
+          done
+
+          echo "ERROR: $container_name did not reach running state within $${max_wait}s."
+          echo "Recent logs for $container_name:"
+          sudo docker logs --tail 20 "$container_name" || true
+          # We do NOT pause if it's broken, so valid logs are preserved/visible in Portainer
+          return 1
         }
 
         # Restart DNS resolver to fix "server misbehaving" errors
