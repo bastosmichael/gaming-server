@@ -287,7 +287,7 @@ resource "null_resource" "deploy_stacks" {
         ${var.enable_valheim ? "cd /opt/valheim && (sudo docker rm -f valheim-server || true) && retry sudo docker compose up -d && check_and_pause valheim-server 120" : "echo 'Skipping Valheim'"}
         ${var.enable_valheim_thunderstore ? "cd /opt/valheim-thunderstore && (sudo docker rm -f valheim-thunderstore-server || true) && retry sudo docker compose up -d && check_and_pause valheim-thunderstore-server 180" : "echo 'Skipping Valheim (Thunderstore)'"}
         ${var.enable_terraria ? "cd /opt/terraria && (sudo docker rm -f terraria-server || true) && retry sudo docker compose up -d && check_and_pause terraria-server 60" : "echo 'Skipping Terraria / tModLoader'"}
-        ${var.enable_dont_starve_together ? "cd /opt/dont-starve-together && (sudo docker rm -f dont-starve-together-server || true) && retry sudo docker compose up -d && check_and_pause dont-starve-together-server 120" : "echo 'Skipping Don't Starve Together'"}
+        ${var.enable_dont_starve_together ? "cd /opt/dont-starve-together && (sudo docker rm -f dont-starve-together-server || true) && retry sudo docker compose up -d && check_and_pause dont-starve-together-server 120" : "echo \"Skipping Don't Starve Together\""}
         ${var.enable_vintage_story ? "cd /opt/vintage-story && (sudo docker rm -f vintage-story-server || true) && retry sudo docker compose up -d && check_and_pause vintage-story-server 60" : "echo 'Skipping Vintage Story'"}
         ${var.enable_roblox ? "cd /opt/roblox && (sudo docker rm -f roblox-studio || true) && retry sudo docker compose up -d" : "echo 'Skipping Roblox Studio'"}
 REMOTE_SCRIPT
