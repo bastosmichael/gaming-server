@@ -2,10 +2,12 @@ version: '3.8'
 
 services:
   terraria-server:
-    image: beardedio/terraria
+    image: lscr.io/linuxserver/terraria:latest
     container_name: terraria-server
     restart: unless-stopped
     environment:
+      - PUID=1000
+      - PGID=1000
       - WORLD_FILENAME=Dedicated.wld
       - WORLD_NAME=Dedicated
       - MAX_PLAYERS=8
