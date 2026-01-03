@@ -18,8 +18,8 @@ services:
       - RUST_SERVER_WORLDSIZE=6000
       - RUST_SERVER_NAME=Rust Server
       - RUST_SERVER_MAXPLAYERS=20
-      - RUST_SERVER_UPDATE_CHECKING=1
-      - RUST_SERVER_UPDATE_BRANCH=public
+      - RUST_UPDATE_CHECKING=1
+      - RUST_UPDATE_BRANCH=public
     volumes:
       - rust_data:/steamcmd/rust
 
