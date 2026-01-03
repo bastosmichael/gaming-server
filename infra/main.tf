@@ -254,7 +254,7 @@ resource "null_resource" "deploy_stacks" {
 
         # Handle CS2 Template Replacement
         sudo mkdir -p /opt/cs2
-        sudo sed -e "s/__CS2_GSLT__/${var.cs2_gslt}/g" /tmp/cs2.docker-compose.yml | sudo tee /opt/cs2/docker-compose.yml >/dev/null
+        sudo sed -e "s/__CS2_GSLT__/${nonsensitive(var.cs2_gslt)}/g" /tmp/cs2.docker-compose.yml | sudo tee /opt/cs2/docker-compose.yml >/dev/null
         sudo rm -f /tmp/cs2.docker-compose.yml
 
         # Deploy Stacks
