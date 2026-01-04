@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   rust-server:
-    image: steamcmd/rust:latest
+    image: didstopia/rust-server:latest
     pull_policy: always
     container_name: rust-server
     restart: unless-stopped
