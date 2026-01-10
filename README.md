@@ -27,7 +27,7 @@ infra/            # Terraform configuration
    cd infra
    terraform init
    terraform apply \
-     -var="docker_host=ssh://michael@192.168.86.38" \
+     -var="docker_host=ssh://michael@192.168.86.42" \
      -var="cs2_gslt=YOUR_STEAM_TOKEN" \
      -var="enable_portainer=true" \
      -var="enable_rust=true" \
@@ -63,7 +63,7 @@ infra/            # Terraform configuration
      -var="enable_roblox=true"
    ```
 
-   **Note:** replace `192.168.86.38` with your actual server IP.
+   **Note:** replace `192.168.86.42` with your actual server IP.
 
 2. **Accessing Portainer:**
    * **Portainer:** `http://<server-ip>:9000`
@@ -128,7 +128,7 @@ To check the logs for a specific server, you can SSH into the server and use `do
 
 **Command:**
 ```bash
-ssh michael@192.168.86.38 "sudo docker logs -f <container_name>"
+ssh michael@192.168.86.42 "sudo docker logs -f <container_name>"
 ```
 
 **Common Container Names:**
