@@ -41,6 +41,8 @@ resource "null_resource" "deploy_stacks" {
       # Copy Compose Files via SCP (renaming on destination to avoid collisions)
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/portainer/docker-compose.yml" "$USER@$HOST:/tmp/portainer.docker-compose.yml"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/rust/docker-compose.yml" "$USER@$HOST:/tmp/rust.docker-compose.yml"
+      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/rust/Dockerfile" "$USER@$HOST:/tmp/rust.Dockerfile"
+      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/rust/start.sh" "$USER@$HOST:/tmp/rust.start.sh"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/ark/docker-compose.yml" "$USER@$HOST:/tmp/ark.docker-compose.yml"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/cs2/docker-compose.yml" "$USER@$HOST:/tmp/cs2.docker-compose.yml"
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${path.module}/stacks/minecraft/docker-compose.yml" "$USER@$HOST:/tmp/minecraft.docker-compose.yml"
@@ -222,6 +224,8 @@ resource "null_resource" "deploy_stacks" {
         # Move files to correct locations
         sudo mv /tmp/portainer.docker-compose.yml /opt/portainer/docker-compose.yml
         sudo mv /tmp/rust.docker-compose.yml /opt/rust-server/docker-compose.yml
+        sudo mv /tmp/rust.Dockerfile /opt/rust-server/Dockerfile
+        sudo mv /tmp/rust.start.sh /opt/rust-server/start.sh
         sudo mv /tmp/ark.docker-compose.yml /opt/ark/docker-compose.yml
         sudo mv /tmp/minecraft.docker-compose.yml /opt/minecraft/docker-compose.yml
         sudo mv /tmp/tf2.docker-compose.yml /opt/tf2/docker-compose.yml
@@ -259,7 +263,7 @@ resource "null_resource" "deploy_stacks" {
 
         # Deploy Stacks
         ${var.enable_portainer ? "cd /opt/portainer && (sudo docker rm -f portainer || true) && retry sudo docker compose up -d" : "echo 'Skipping Portainer'"}
-        ${var.enable_rust ? "cd /opt/rust-server && (sudo docker rm -f rust-server || true) && retry sudo docker compose up -d && check_and_pause rust-server 600" : "echo 'Skipping Rust'"}
+        ${var.enable_rust ? "cd /opt/rust-server && (sudo docker rm -f rust-server || true) && retry sudo docker compose up -d --build && check_and_pause rust-server 600" : "echo 'Skipping Rust'"}
         ${var.enable_ark ? "cd /opt/ark && (sudo docker rm -f ark-server ark_server || true) && retry sudo docker compose up -d && check_and_pause ark-server 600" : "echo 'Skipping ARK'"}
         ${var.enable_cs2 ? "cd /opt/cs2 && (sudo docker rm -f cs2-server cs2_server || true) && retry sudo docker compose up -d && check_and_pause cs2-server 60" : "echo 'Skipping CS2'"}
         ${var.enable_minecraft ? "cd /opt/minecraft && (sudo docker rm -f minecraft-server || true) && retry sudo docker compose up -d && check_and_pause minecraft-server 120" : "echo 'Skipping Minecraft'"}
