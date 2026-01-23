@@ -32,6 +32,10 @@ resource "null_resource" "bootstrap_docker" {
 resource "null_resource" "deploy_stacks" {
   depends_on = [null_resource.bootstrap_docker]
 
+  triggers = {
+    dir_sha1 = sha256(join("", [for f in fileset(path.module, "stacks/**") : filesha256("${path.module}/${f}")]))
+  }
+
   provisioner "local-exec" {
     command = <<EOT
       # Define HOST and USER
