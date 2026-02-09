@@ -1,10 +1,6 @@
 #!/bin/bash
 set -e
 
-echo "Cleaning bundles to ensure integrity..."
-rm -rf /steamcmd/rust/game/Bundles
-rm -rf /steamcmd/rust/game/bundles
-
 echo "Updating Rust server..."
 # Update and validate the server files
 # app_id 258550 is Rust
@@ -23,7 +19,8 @@ echo "Starting Rust server..."
 
 # Construct startup arguments
 # Note: +server.secure 1 is default
-exec ./game/RustDedicated \
+cd /steamcmd/rust/game
+exec ./RustDedicated \
   -batchmode \
   -nographics \
   -server.ip 0.0.0.0 \
