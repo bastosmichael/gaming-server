@@ -10,7 +10,7 @@ echo "Starting Rust server..."
 # Default environment variables
 : ${RUST_SERVER_IDENTITY:="docker"}
 : ${RUST_SERVER_SEED:="12345"}
-: ${RUST_SERVER_WORLDSIZE:="6000"}
+: ${RUST_SERVER_WORLDSIZE:="4500"}
 : ${RUST_SERVER_NAME:="Rust Server"}
 : ${RUST_SERVER_MAXPLAYERS:="10"}
 : ${RUST_RCON_PORT:="28016"}
