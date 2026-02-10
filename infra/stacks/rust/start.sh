@@ -16,6 +16,7 @@ echo "Starting Rust server..."
 : ${RUST_RCON_PORT:="28016"}
 : ${RUST_RCON_PASSWORD:="docker"}
 : ${RUST_SERVER_PORT:="28015"}
+: ${RUST_SERVER_PASSWORD:="evermore"}
 
 # Construct startup arguments
 # Note: +server.secure 1 is default
@@ -33,4 +34,5 @@ exec ./RustDedicated \
   -server.worldsize "$RUST_SERVER_WORLDSIZE" \
   -server.hostname "$RUST_SERVER_NAME" \
   -server.maxplayers "$RUST_SERVER_MAXPLAYERS" \
+  -server.password "$RUST_SERVER_PASSWORD" \
   $RUST_SERVER_STARTUP_ARGUMENTS
