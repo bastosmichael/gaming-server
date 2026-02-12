@@ -7,25 +7,28 @@ df -h
 # Update and validate the server files
 # app_id 258550 is Rust
 # Using a retry loop because steamcmd can be flaky (0x6 errors)
-MAX_RETRIES=5
 RETRY_DELAY=10
+MAX_DELAY=300 # Cap delay at 5 minutes
+attempt=1
 
-for ((i=1; i<=MAX_RETRIES; i++)); do
-    echo "Update attempt $i of $MAX_RETRIES..."
+while true; do
+    echo "Update attempt $attempt..."
     # We use 'set +e' temporarily to handle the potential failure manually, 
     # though usage in 'if' should prevent immediate exit with 'set -e'
     if steamcmd +force_install_dir /steamcmd/rust/game +login anonymous +app_update 258550 validate +quit; then
         echo "Rust server update successful!"
         break
     else
-        echo "SteamCMD update failed."
-        if [ $i -lt $MAX_RETRIES ]; then
-            echo "Retrying in $RETRY_DELAY seconds..."
-            sleep $RETRY_DELAY
-        else
-            echo "Failed to update Rust server after $MAX_RETRIES attempts."
-            exit 1
+        echo "SteamCMD update failed. Retrying in $RETRY_DELAY seconds..."
+        sleep $RETRY_DELAY
+
+        # Exponential backoff with a cap
+        RETRY_DELAY=$((RETRY_DELAY * 2))
+        if [ $RETRY_DELAY -gt $MAX_DELAY ]; then
+            RETRY_DELAY=$MAX_DELAY
         fi
+        
+        attempt=$((attempt + 1))
     fi
 done
 
