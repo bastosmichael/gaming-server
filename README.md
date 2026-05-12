@@ -27,11 +27,12 @@ infra/            # Terraform configuration
    cd infra
    terraform init
    terraform apply \
+     -replace="null_resource.deploy_stacks" \
      -var="docker_host=ssh://michael@192.168.86.42" \
-     -var="cs2_gslt=YOUR_STEAM_TOKEN" \
      -var="enable_portainer=true" \
      -var="enable_rust=true" \
      -var="enable_ark=true" \
+     -var="cs2_gslt=YOUR_STEAM_TOKEN" \
      -var="enable_cs2=true" \
      -var="enable_minecraft=true" \
      -var="enable_tf2=true" \
