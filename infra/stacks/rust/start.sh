@@ -1,24 +1,33 @@
 #!/bin/bash
 set -e
 
+INSTALL_DIR="/steamcmd/rust/game"
+APP_ID="258550"
+
 echo "Checking disk space..."
 df -h
 
 # Update and validate the server files
 # app_id 258550 is Rust
-# Using a retry loop because steamcmd can be flaky (0x6 errors)
+# Clear partial SteamCMD state between retries to recover from stuck manifests.
 RETRY_DELAY=10
 MAX_DELAY=300 # Cap delay at 5 minutes
 attempt=1
 
+reset_steamcmd_state() {
+    echo "Resetting SteamCMD state for app ${APP_ID}..."
+    rm -f "${INSTALL_DIR}/steamapps/appmanifest_${APP_ID}.acf"
+    rm -rf "${INSTALL_DIR}/steamapps/downloading/${APP_ID}"
+    rm -rf "${INSTALL_DIR}/steamapps/temp"
+}
+
 while true; do
     echo "Update attempt $attempt..."
-    # We use 'set +e' temporarily to handle the potential failure manually, 
-    # though usage in 'if' should prevent immediate exit with 'set -e'
-    if steamcmd +force_install_dir /steamcmd/rust/game +login anonymous +app_update 258550 validate +quit; then
+    if steamcmd +force_install_dir "${INSTALL_DIR}" +login anonymous +app_update "${APP_ID}" validate +quit; then
         echo "Rust server update successful!"
         break
     else
+        reset_steamcmd_state
         echo "SteamCMD update failed. Retrying in $RETRY_DELAY seconds..."
         sleep $RETRY_DELAY
 
@@ -46,7 +55,7 @@ echo "Starting Rust server..."
 
 # Construct startup arguments
 # Note: +server.secure 1 is default
-cd /steamcmd/rust/game
+cd "${INSTALL_DIR}"
 exec ./RustDedicated \
   -batchmode \
   -nographics \
